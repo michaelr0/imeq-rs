@@ -1,0 +1,17 @@
+[package]
+name = "imeq"
+description = "imeq-rs aims to quickly compare two images to see if they are the same image"
+version = "0.0.1"
+edition = "2021"
+keywords = ["image"]
+repository = "https://github.com/michaelr0/imeq-rs"
+license = "MIT"
+readme = "README.md"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+clap = { features = ["yaml"], version = "2.34.0" }
+image = "0.23.14"
+rayon = "1.5.1"
+ring = "0.16.20"
