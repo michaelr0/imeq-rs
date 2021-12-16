@@ -1,0 +1,14 @@
+name: imgeq
+version: "0.0.1"
+author: https://github.com/michaelr0/imeq-rs
+settings:
+    - ArgRequiredElseHelp
+args:
+    - IMAGE_1:
+        help: Sets the first image to use
+        required: true
+        index: 1
+    - IMAGE_2:
+        help: Sets the second image to use
+        required: true
+        index: 2
