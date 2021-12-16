@@ -1,13 +1,12 @@
 imeq-rs aims to quickly compare two images to see if they are the same image.
 
-
-# Build
+## Build
 Compiles to: `target/release/imeq`
 ```
 cargo build --release
 ```
 
-# Usage
+## Usage
 ```
 USAGE:
     imeq <IMAGE_1> <IMAGE_2>
@@ -21,12 +20,15 @@ ARGS:
     <IMAGE_2>    Sets the second image to use
 ```
 
-# Benchmark
+## Benchmark
 The below benchmarks have been done on a 2020 M1 Mac Mini with 16gb of ram and 256gb ssd, `hyperfine -w 3` is used and that command is then ran 3 times (outside of -w 3) and the result of the third run has been noted.
 
 `baseline.jpeg` and `baseline_by_another_name.jpeg` should be identical, apart from the name.
 
+`flipped.jpeg` has been flipped horizontally.
+
 `modified.jpeg` has been modified so that the very last (bottom right) pixel is red.
+
 
 
 ### hyperfine -w 3 'target/release/imeq images/baseline.jpeg images/baseline.jpeg'
@@ -41,6 +43,12 @@ The below benchmarks have been done on a 2020 M1 Mac Mini with 16gb of ram and 2
   Range (min … max):     4.8 ms …   8.3 ms    384 runs
 ```
 
+### hyperfine -w 3 'target/release/imeq images/baseline.jpeg images/flipped.jpeg'
+```bash
+  Time (mean ± σ):      90.5 ms ±   1.1 ms    [User: 448.1 ms, System: 52.0 ms]
+  Range (min … max):    89.1 ms …  94.0 ms    31 runs
+```
+
 ### hyperfine -w 3 'target/release/imeq images/baseline.jpeg images/modified.jpeg'
 ```bash
   Time (mean ± σ):     112.5 ms ±   2.1 ms    [User: 467.5 ms, System: 52.2 ms]
@@ -48,4 +56,13 @@ The below benchmarks have been done on a 2020 M1 Mac Mini with 16gb of ram and 2
 ```
 
 ## Credits
+
+- [Handmade Web & Design](https://github.com/handmadeweb)
+- [Michael Rook](https://github.com/michaelr0)
+- [All Contributors](https://github.com/michaelr0/imeq-rs/graphs/contributors)
+
 [Goat Image](https://unsplash.com/photos/J9wZ6D2kYPw) by [Florian van Duyn](https://unsplash.com/@flovayn)
+
+## License
+
+The MIT License (MIT). Please see [License File](https://github.com/michaelr0/imeq-rs/blob/main/LICENSE.md) for more information.

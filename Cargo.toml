@@ -1,9 +1,11 @@
 [package]
 name = "imeq"
-description = "imeq-rs aims to quickly compare two images to see if they are the same image"
+description = "imeq aims to quickly compare two images to see if they are the same image"
 version = "0.0.1"
 edition = "2021"
-keywords = ["image"]
+categories = ["multimedia::images"]
+exclude = ["images/*"]
+authors = ["Michael Rook"]
 repository = "https://github.com/michaelr0/imeq-rs"
 license = "MIT"
 readme = "README.md"
