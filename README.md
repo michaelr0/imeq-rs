@@ -1,9 +1,8 @@
 imeq-rs aims to quickly compare two images to see if they are the same image.
 
-## Build
-Compiles to: `target/release/imeq`
+## Installation
 ```
-cargo build --release
+cargo install imeq
 ```
 
 ## Usage
@@ -18,6 +17,12 @@ FLAGS:
 ARGS:
     <IMAGE_1>    Sets the first image to use
     <IMAGE_2>    Sets the second image to use
+```
+
+## Building
+Compiles to: `target/release/imeq`
+```
+cargo build --release
 ```
 
 ## Benchmark
