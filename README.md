@@ -38,26 +38,26 @@ The below benchmarks have been done on a 2020 M1 Mac Mini with 16gb of ram and 2
 
 ### hyperfine -w 3 'target/release/imeq images/baseline.jpeg images/baseline.jpeg'
 ```bash
-  Time (mean ± σ):       1.0 ms ±   0.3 ms    [User: 0.6 ms, System: 0.2 ms]
-  Range (min … max):     0.6 ms …   4.0 ms    936 runs
+  Time (mean ± σ):       1.1 ms ±   0.3 ms    [User: 0.6 ms, System: 0.3 ms]
+  Range (min … max):     0.8 ms …   2.6 ms    857 runs
 ```
 
 ### hyperfine -w 3 'target/release/imeq images/baseline.jpeg images/baseline_by_another_name.jpeg'
 ```bash
-  Time (mean ± σ):       5.3 ms ±   0.4 ms    [User: 7.3 ms, System: 2.2 ms]
-  Range (min … max):     4.8 ms …   8.3 ms    384 runs
+  Time (mean ± σ):       5.5 ms ±   0.4 ms    [User: 7.4 ms, System: 2.3 ms]
+  Range (min … max):     5.1 ms …   7.5 ms    308 runs
 ```
 
 ### hyperfine -w 3 'target/release/imeq images/baseline.jpeg images/flipped.jpeg'
 ```bash
-  Time (mean ± σ):      90.5 ms ±   1.1 ms    [User: 448.1 ms, System: 52.0 ms]
-  Range (min … max):    89.1 ms …  94.0 ms    31 runs
+  Time (mean ± σ):      93.7 ms ±   3.4 ms    [User: 443.6 ms, System: 54.2 ms]
+  Range (min … max):    90.4 ms … 102.8 ms    31 runs
 ```
 
 ### hyperfine -w 3 'target/release/imeq images/baseline.jpeg images/modified.jpeg'
 ```bash
-  Time (mean ± σ):     112.5 ms ±   2.1 ms    [User: 467.5 ms, System: 52.2 ms]
-  Range (min … max):   110.4 ms … 121.6 ms    26 runs
+  Time (mean ± σ):     113.1 ms ±   0.9 ms    [User: 471.1 ms, System: 53.4 ms]
+  Range (min … max):   111.4 ms … 115.5 ms    26 runs
 ```
 
 ## Credits
