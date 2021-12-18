@@ -1,5 +1,5 @@
 name: imgeq
-version: "0.0.2"
+version: "0.1.0"
 author: https://github.com/michaelr0/imeq-rs
 settings:
     - ArgRequiredElseHelp
