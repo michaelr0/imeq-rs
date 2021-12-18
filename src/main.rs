@@ -1,30 +1,30 @@
 use clap::{load_yaml, App};
 
 fn main() {
-    // Init APP/CLI
     let config = load_yaml!("main.yml");
     let app = App::from_yaml(config);
     let cli = app.get_matches();
 
-    // Get image paths from CLI
-    let images = imeq::get_image_names(&cli);
+    let image_1 = cli
+        .value_of("IMAGE_1")
+        .expect("first image is required")
+        .to_string();
 
-    // Check if images use the same path
-    imeq::check_image_same_path(&images);
+    let image_2 = cli
+        .value_of("IMAGE_2")
+        .expect("second image is required")
+        .to_string();
 
-    // Open images and read bytes
-    let images = imeq::open_images(images);
+    let images_match = imeq::Compare::new(image_1, image_2)
+        .enable_check_images_have_same_path()
+        .enable_check_image_hashes_match()
+        .enable_check_images_dimensions_match()
+        .enable_check_images_pixels_match()
+        .are_match();
 
-    // Generate hashes
-    let hashes = imeq::get_hashes(&images);
-
-    // Check if images have matching hashes
-    imeq::check_image_hashes(hashes);
-
-    // Compare images dimensions and pixels
-    imeq::compare_image_as_images(&images);
-
-    // Everything else has led to this moment!
-    // The images appear to match!
-    println!("Images are a match");
+    if images_match {
+        println!("Images are a match");
+    } else {
+        println!("Images are not a match");
+    }
 }

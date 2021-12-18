@@ -1,94 +1,119 @@
-use clap::ArgMatches;
 use image::{DynamicImage, GenericImageView, Pixels};
 use rayon::prelude::*;
 use ring::digest::{self};
-use std::{fs::File, io::Read, process::exit};
+use std::{collections::HashMap, fs::File, io::Read};
 
-/// Check if images use the same path
-pub fn get_image_names(cli: &ArgMatches) -> Vec<String> {
-    vec![
-        cli.value_of("IMAGE_1")
-            .expect("first image is required")
-            .to_string(),
-        cli.value_of("IMAGE_2")
-            .expect("second image is required")
-            .to_string(),
-    ]
+pub struct Compare<'a> {
+    images: [String; 2],
+    checks: HashMap<&'a str, bool>,
 }
 
-/// Open images and read bytes
-pub fn open_images(images: Vec<String>) -> Vec<Vec<u8>> {
-    images
-        .par_iter()
-        .map(|i| {
-            let mut buf = Vec::new();
+impl Compare<'_> {
+    pub fn new(image_1: String, image_2: String) -> Self {
+        let mut compare = Compare {
+            images: [image_1, image_2],
+            checks: HashMap::new(),
+        };
 
-            File::open(i)
-                .expect("Unable to open file")
-                .read_to_end(&mut buf)
-                .unwrap();
+        compare.checks.insert("images_have_same_path", false);
+        compare.checks.insert("image_hashes_match", false);
+        compare.checks.insert("image_dimensions_match", false);
+        compare.checks.insert("image_pixels_match", false);
 
-            buf
-        })
-        .collect::<Vec<Vec<u8>>>()
-}
-
-/// Generate hashes
-pub fn get_hashes(images: &Vec<Vec<u8>>) -> Vec<Vec<u8>> {
-    images
-        .par_iter()
-        .map(|i| digest::digest(&digest::SHA512, i).as_ref().to_owned())
-        .collect::<Vec<Vec<u8>>>()
-}
-
-/// Check if images use the same path
-pub fn check_image_same_path(images: &Vec<String>) {
-    if images.first() == images.last() {
-        println!("Images are the same file");
-        exit(0);
-    }
-}
-
-/// Check if images have matching hashes
-pub fn check_image_hashes(hashes: Vec<Vec<u8>>) {
-    if hashes.first().eq(&hashes.last()) {
-        println!("Images are the same file");
-        exit(0);
-    }
-}
-
-/// Compare images dimensions and pixels
-pub fn compare_image_as_images(images: &Vec<Vec<u8>>) {
-    let images = images
-        .par_iter()
-        .map(|i| image::load_from_memory(i).expect("Could not read image"))
-        .collect::<Vec<DynamicImage>>();
-
-    // Compare images dimensions
-    if !image_dimensions_match(&images) {
-        println!("Images aren't the same dimensions");
-        exit(0);
+        compare
     }
 
-    let images = images
-        .par_iter()
-        .map(|i| i.pixels())
-        .collect::<Vec<Pixels<DynamicImage>>>();
+    pub fn enable_check(&mut self, check: &'static str) -> &mut Self {
+        self.checks.insert(check, true);
 
-    let image1 = images.first().unwrap().to_owned();
-    let image2 = images.last().unwrap().to_owned();
-
-    // Compare images pixels
-    if image1.ne(image2) {
-        println!("Images are not a match");
-        exit(0);
+        self
     }
-}
 
-/// Compare images dimensions
-pub fn image_dimensions_match(images: &Vec<DynamicImage>) -> bool {
-    let image1_dimensions = images.first().unwrap().dimensions();
-    let image2_dimensions = images.last().unwrap().dimensions();
+    pub fn enable_check_images_have_same_path(&mut self) -> &mut Self {
+        self.enable_check("images_have_same_path")
+    }
 
-    image1_dimensions.eq(&image2_dimensions)
+    pub fn enable_check_image_hashes_match(&mut self) -> &mut Self {
+        self.enable_check("image_hashes_match")
+    }
+
+    pub fn enable_check_images_dimensions_match(&mut self) -> &mut Self {
+        self.enable_check("image_dimensions_match")
+    }
+
+    pub fn enable_check_images_pixels_match(&mut self) -> &mut Self {
+        self.enable_check("image_pixels_match")
+    }
+
+    fn is_check_enabled(&self, check: &'static str) -> bool {
+        *self.checks.get(check).unwrap_or(&false)
+    }
+
+    pub fn are_match(&self) -> bool {
+        if self.is_check_enabled("images_have_same_path")
+            && self.images.first() == self.images.last()
+        {
+            return true;
+        }
+
+        let images = self
+            .images
+            .par_iter()
+            .map(|i| {
+                let mut buf = Vec::new();
+
+                File::open(i)
+                    .expect("Unable to open file")
+                    .read_to_end(&mut buf)
+                    .unwrap();
+
+                buf
+            })
+            .collect::<Vec<Vec<u8>>>();
+
+        if self.is_check_enabled("image_hashes_match") {
+            let hashes = images
+                .par_iter()
+                .map(|i| digest::digest(&digest::SHA512, i).as_ref().to_owned())
+                .collect::<Vec<Vec<u8>>>();
+
+            if hashes.first().eq(&hashes.last()) {
+                return true;
+            }
+        }
+
+        let images = images
+            .par_iter()
+            .map(|i| image::load_from_memory(i).expect("Could not read image"))
+            .collect::<Vec<DynamicImage>>();
+
+        if self.is_check_enabled("image_dimensions_match") {
+            let image1_dimensions = images.first().unwrap().dimensions();
+            let image2_dimensions = images.last().unwrap().dimensions();
+
+            if image1_dimensions.ne(&image2_dimensions) {
+                return false;
+            }
+        }
+
+        if self.is_check_enabled("image_pixels_match") {
+            let images = images
+                .par_iter()
+                .map(|i| i.pixels())
+                .collect::<Vec<Pixels<DynamicImage>>>();
+
+            let image1 = images.first().unwrap().to_owned();
+            let image2 = images.last().unwrap().to_owned();
+
+            if image1.eq(image2) {
+                return true;
+            }
+        }
+
+        false
+    }
+
+    pub fn arent_match(&self) -> bool {
+        !self.are_match()
+    }
 }
