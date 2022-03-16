@@ -70,7 +70,7 @@ cargo add imeq
 ```rust
 let image_1 = "images/baseline.jpeg".to_string();
 
-let image_2 = "images/modfied.jpeg".to_string();
+let image_2 = "images/modified.jpeg".to_string();
 
 let images_match = imeq::Compare::new(image_1, image_2)
     .enable_check_images_have_same_path()
